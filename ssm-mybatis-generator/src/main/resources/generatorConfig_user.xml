@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<!-- 引入配置文件 -->  
+    <properties resource="generator.properties"/>
+
+	<!-- 数据库驱动-->
+	<!--<classPathEntry	location="mysql-connector-java-5.1.23-bin.jar"/>-->
+
+	<!-- 一个数据库一个context -->
+	<context id="mysql" targetRuntime="MyBatis3">
+
+		<!-- 注释 -->
+		<commentGenerator>
+			<!-- 是否生成注释代时间戳-->
+			<property name="suppressDate" value="true"/>
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true"/>
+		</commentGenerator>
+
+		<!-- jdbc连接 -->  
+        <jdbcConnection driverClass="${jdbc_driver}"
+            connectionURL="${jdbc_url}" userId="${jdbc_user}"
+            password="${jdbc_password}" />
+
+		<!-- 类型转换 -->
+		<javaTypeResolver>
+			<!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） --> 
+			<property name="forceBigDecimals" value="false"/>
+		</javaTypeResolver>
+
+		<!-- 生成实体类 -->
+		<javaModelGenerator targetPackage="com.rocky.ssm.model" targetProject="com">
+			<!-- 是否在当前路径下新加一层schema,eg：fase路径com.oop.eksp.user.model， true:com.oop.eksp.user.model.[schemaName] -->
+			<property name="enableSubPackages" value="true"/>
+			<!-- 是否针对string类型的字段在set的时候进行trim调用 -->
+			<property name="trimStrings" value="true"/>
+		</javaModelGenerator>
+
+		<!-- 生成映射文件 -->
+		<sqlMapGenerator targetPackage="com.rocky.ssm.mapping" targetProject="com">
+			<!-- 是否在当前路径下新加一层schema,eg：fase路径com.oop.eksp.user.model， true:com.oop.eksp.user.model.[schemaName] -->
+			<property name="enableSubPackages" value="true"/>
+		</sqlMapGenerator>
+
+		<!-- 生成DAO -->
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.rocky.ssm.dao" targetProject="com">
+			<property name="enableSubPackages" value="true"/>
+		</javaClientGenerator>
+
+		<table tableName="user" domainObjectName="User" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+		 
+	</context>
+</generatorConfiguration>

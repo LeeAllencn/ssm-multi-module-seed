@@ -13,6 +13,7 @@
         <module>ssm-dao</module>
         <module>ssm-service</module>
         <module>ssm-web</module>
+        <module>ssm-mybatis-generator</module>
     </modules>
 
     <properties>
