@@ -51,7 +51,8 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
     public JavaMapperGenerator(boolean requiresMatchedXMLGenerator) {
         super(requiresMatchedXMLGenerator);
     }
-    
+
+    // dao层的设置
     @Override
     public List<CompilationUnit> getCompilationUnits() {
         progressCallback.startTask(getString("Progress.17", //$NON-NLS-1$
@@ -64,7 +65,6 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         interfaze.setVisibility(JavaVisibility.PUBLIC);
         commentGenerator.addJavaFileComment(interfaze);
         
-        //begin add by xuy on 2015-09-10
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         interfaze.addJavaDocLine("/**");
     	interfaze.addJavaDocLine(" * 表名：" + introspectedTable.getFullyQualifiedTable());
@@ -77,15 +77,12 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
     	interfaze.addJavaDocLine(" */");
     	interfaze.addJavaDocLine("@BatisRepository");
     	FullyQualifiedJavaType fqjtbr = new FullyQualifiedJavaType(
-                "com.haihangyun.hcpaas.utils.repository.base.BatisRepository");
+                "com.rocky.ssm.utils.repository.base.BatisRepository");
         interfaze.addImportedType(fqjtbr);
-        //end add by xuy on 2015-09-10
-        
-        //begin add by xuy on 2015-09-21
-        FullyQualifiedJavaType superInterface = new FullyQualifiedJavaType("com.haihangyun.hcpaas.utils.repository.IBaseDao");
+
+        FullyQualifiedJavaType superInterface = new FullyQualifiedJavaType("com.rocky.ssm.utils.repository.IBaseDao");
         interfaze.addSuperInterface(superInterface);
         interfaze.addImportedType(superInterface);
-        //end add by xuy on 2015-09-21
 
         String rootInterface = introspectedTable
             .getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
@@ -103,28 +100,20 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         
         addCountByExampleMethod(interfaze);
         addDeleteByExampleMethod(interfaze);
-        //begin delete by xuy on 2015-09-21
 //        addDeleteByPrimaryKeyMethod(interfaze);
 //        addInsertMethod(interfaze);
-        //end delete by xuy on 2015-09-21
-        
-        //begin delete by xuy on 2015-09-09
+
 //        addInsertSelectiveMethod(interfaze);
-        //end delete by xuy on 2015-09-09
         addUpdateByExampleSelectiveMethod(interfaze);
         addUpdateByExampleWithBLOBsMethod(interfaze);
         addUpdateByExampleWithoutBLOBsMethod(interfaze);
-        //begin delete by xuy on 2015-09-21
 //        addUpdateByPrimaryKeySelectiveMethod(interfaze);
 //        addUpdateByPrimaryKeyWithBLOBsMethod(interfaze);
 //        addUpdateByPrimaryKeyWithoutBLOBsMethod(interfaze);
-        //end delete by xuy on 2015-09-21
         addSelectByExampleWithBLOBsMethod(interfaze);
         addSelectByExampleWithoutBLOBsMethod(interfaze);
         addSelectByPrimaryKeyMethod(interfaze);
-        //begin add by xuy on 2015-09-10
         addSelectSelectiveMethod(interfaze);
-        //end add by xuy on 2015-09-10
 
         List<CompilationUnit> answer = new ArrayList<CompilationUnit>();
         if (context.getPlugins().clientGenerated(interfaze, null,
@@ -258,12 +247,10 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         return new XMLMapperGenerator();
     }
     
-    //begin add xuy on 2015-09-10
     protected void addSelectSelectiveMethod(Interface interfaze) {
         if (introspectedTable.getRules().generateSelectByPrimaryKey()) {
             AbstractJavaMapperMethodGenerator methodGenerator = new SelectSelectiveMethodGenerator();
             initializeAndExecuteGenerator(methodGenerator, interfaze);
         }
     }
-    //end add xuy on 2015-09-10
 }

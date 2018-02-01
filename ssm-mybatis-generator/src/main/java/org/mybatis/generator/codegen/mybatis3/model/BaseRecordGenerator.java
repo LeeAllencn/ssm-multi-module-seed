@@ -53,14 +53,11 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
         commentGenerator.addJavaFileComment(topLevelClass);
 
-        //begin add by xuy on 2015-09-09
         commentGenerator.addClassComment(topLevelClass, introspectedTable);
-        //end add by xuy on 2015-09-09
-        
-        //begin modify by xuy on 2015-09-10
+
+        // 设置实体类的基本继承类
 //        FullyQualifiedJavaType superClass = getSuperClass();
-        FullyQualifiedJavaType superClass = new FullyQualifiedJavaType("com.rocky.ssm.model.BaseEntity");
-        //end modify by xuy on 2015-09-10
+        FullyQualifiedJavaType superClass = new FullyQualifiedJavaType("com.rocky.ssm.utils.entity.BaseEntity");
         if (superClass != null) {
             topLevelClass.setSuperClass(superClass);
             topLevelClass.addImportedType(superClass);
@@ -82,18 +79,14 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
                     .containsProperty(introspectedColumn)) {
                 continue;
             }
-            //begin add by xuy on 2015-11-02
             if ("java.lang.Short".equals(introspectedColumn.getFullyQualifiedJavaType().getBaseQualifiedName())) {
             	introspectedColumn.setFullyQualifiedJavaType(new FullyQualifiedJavaType("java.lang.Integer"));
 			}
-            //end add by xuy on 2015-11-02
 
             Field field = getJavaBeansField(introspectedColumn);
-//            //begin add by xuy on 2015-09-21
 //            if ("id".equals(field.getName())) {
 //            	continue;
 //			}
-//            //end add by xuy on 2015-09-21
             if (plugins.modelFieldGenerated(field, topLevelClass,
                     introspectedColumn, introspectedTable,
                     Plugin.ModelClassType.BASE_RECORD)) {
@@ -102,13 +95,12 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
             }
 
             Method method = getJavaBeansGetter(introspectedColumn);
-            //begin add by xuy on 2015-09-21
+            // 格式化日期的返回格式
             if ("java.util.Date".equals(method.getReturnType().getBaseQualifiedName())) {
             	method.addJavaDocLine("@JsonSerialize(using = JsonDateSerializer.class)");
-            	topLevelClass.addImportedType("com.haihangyun.hcpaas.utils.format.JsonDateSerializer");
+            	topLevelClass.addImportedType("com.rocky.ssm.utils.format.JsonDateSerializer");
             	topLevelClass.addImportedType("com.fasterxml.jackson.databind.annotation.JsonSerialize");
     		}
-            //end add by xuy on 2015-09-21
             if (plugins.modelGetterMethodGenerated(method, topLevelClass,
                     introspectedColumn, introspectedTable,
                     Plugin.ModelClassType.BASE_RECORD)) {
@@ -131,16 +123,13 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
             answer.add(topLevelClass);
         }
         
-        //begin add by xuy on 2015-09-10
         TopLevelClass voClass = getVoClass(topLevelClass);
         answer.add(voClass);
         answer.add(getServiceClass(topLevelClass,voClass));
         answer.add(getControllerClass(topLevelClass,voClass));
-        //end add by xuy on 2015-09-10
         return answer;
     }
 
-    //begin delete by xuy on 2015-09-10
 //    private FullyQualifiedJavaType getSuperClass() {
 //        FullyQualifiedJavaType superClass;
 //        if (introspectedTable.getRules().generatePrimaryKeyClass()) {
@@ -157,7 +146,6 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
 //
 //        return superClass;
 //    }
-    //end delete by xuy on 2015-09-10
 
     private boolean includePrimaryKeyColumns() {
         return !introspectedTable.getRules().generatePrimaryKeyClass()
@@ -236,8 +224,8 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         
         return introspectedColumns;
     }
-    
-    //begin add by xuy on 2015-09-10
+
+    // 设置扩展类
     private TopLevelClass getVoClass(TopLevelClass superClass){
     	CommentGenerator commentGenerator = context.getCommentGenerator();
     	FullyQualifiedJavaType type = new FullyQualifiedJavaType(
@@ -250,7 +238,8 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         topLevelClass.addImportedType(superClass.getType());
     	return topLevelClass;
     }
-    
+
+    // 设置service层的类、字段、方法
     private TopLevelClass getServiceClass(TopLevelClass superClass,TopLevelClass voClass){
     	CommentGenerator commentGenerator = context.getCommentGenerator();
     	
@@ -266,7 +255,7 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         topLevelClass.addImportedType("org.springframework.stereotype.Service");
 //        topLevelClass.addImportedType(superClass.getType());
         topLevelClass.addImportedType(voClass.getType());
-        FullyQualifiedJavaType superCls = new FullyQualifiedJavaType("com.haihangyun.hcpaas.utils.service.BaseService");
+        FullyQualifiedJavaType superCls = new FullyQualifiedJavaType("com.rocky.ssm.utils.service.BaseService");
         topLevelClass.setSuperClass(superCls);
         topLevelClass.addImportedType(superCls);
         
@@ -346,7 +335,7 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         method4.setName("queryByPage");
         FullyQualifiedJavaType fqjtmap = new FullyQualifiedJavaType("java.util.Map<String, Object>");
         method4.addParameter(new Parameter(fqjtmap, "params"));
-        FullyQualifiedJavaType fqjtpb = new FullyQualifiedJavaType("com.haihangyun.hcpaas.utils.paginator.domain.PageBounds");
+        FullyQualifiedJavaType fqjtpb = new FullyQualifiedJavaType("com.rocky.ssm.utils.paginator.domain.PageBounds");
         method4.addParameter(new Parameter(fqjtpb, "page"));
         method4.addBodyLine("return "+field.getName()+".selectByPage(params, page);");
         FullyQualifiedJavaType innerReturnType = fqjtlist.getTypeArguments().get(0);
@@ -359,7 +348,7 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         
         Method method5 = new Method();
         method5.setVisibility(JavaVisibility.PROTECTED);
-        FullyQualifiedJavaType fqjtSuper = new FullyQualifiedJavaType("com.haihangyun.hcpaas.utils.repository.IBaseDao");
+        FullyQualifiedJavaType fqjtSuper = new FullyQualifiedJavaType("com.rocky.ssm.utils.repository.IBaseDao");
         method5.setReturnType(fqjtSuper);
         method5.setName("getDao");
         method5.addBodyLine("return "+field.getName()+";");
@@ -367,7 +356,8 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         topLevelClass.addImportedType(fqjtSuper);
         topLevelClass.addMethod(method5);
     }
-    
+
+    // 设置controller层的类、字段、方法
     private TopLevelClass getControllerClass(TopLevelClass superClass,TopLevelClass voClass){
     	CommentGenerator commentGenerator = context.getCommentGenerator();
     	String shortName = superClass.getType().getShortName();
@@ -393,7 +383,7 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         topLevelClass.addImportedType("org.springframework.web.bind.annotation.ResponseBody");
 //        topLevelClass.addImportedType(superClass.getType());
         topLevelClass.addImportedType(voClass.getType());
-        FullyQualifiedJavaType superCls = new FullyQualifiedJavaType("com.haihangyun.hcpaas.utils.web.controller.base.BaseController");
+        FullyQualifiedJavaType superCls = new FullyQualifiedJavaType("com.rocky.ssm.utils.web.controller.base.BaseController");
         topLevelClass.setSuperClass(superCls);
         topLevelClass.addImportedType(superCls);
         
@@ -432,7 +422,7 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
 		method2.setName("search");
 		FullyQualifiedJavaType fqjtmap = new FullyQualifiedJavaType("java.util.Map<String,Object>");
 		method2.addParameter(new Parameter(fqjtmap, "params", "@RequestParam"));
-		FullyQualifiedJavaType fqjtpb = new FullyQualifiedJavaType("com.haihangyun.hcpaas.utils.paginator.domain.PageJqGrid");
+		FullyQualifiedJavaType fqjtpb = new FullyQualifiedJavaType("com.rocky.ssm.utils.paginator.domain.PageJqGrid");
 		method2.addParameter(new Parameter(fqjtpb, "page"));
 		method2.addBodyLine("List<"+voClass.getType().getShortName()+"> list = "+lowerShortName+"Service.queryByPage(params, page);");
 		method2.addBodyLine("return list;");

@@ -53,7 +53,7 @@ public class SelectSelectiveMethodGenerator extends
         Parameter parameter = new Parameter(type, "params");
         method.addParameter(parameter);
         
-        type = new FullyQualifiedJavaType("com.haihangyun.hcpaas.utils.paginator.domain.PageBounds");
+        type = new FullyQualifiedJavaType("com.rocky.ssm.utils.paginator.domain.PageBounds");
         importedTypes.add(type);
         parameter = new Parameter(type, "page");
         method.addParameter(parameter);
